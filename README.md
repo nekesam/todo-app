@@ -124,9 +124,3 @@ MIT — feel free to reuse and adapt.
 
 ---
 
-If you'd like, I can also:
-- Add an edit task mode that reuses the add form
-- Add unit tests or a tiny CI workflow
-- Provide a simple Express/Netlify function backend that matches the API
-
-Enjoy!
