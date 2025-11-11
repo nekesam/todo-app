@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List App</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- App Header -->
+    <header class="app-header">
+      <h1>My To-Do List</h1>
+      <button id="add-task-btn" class="primary-btn">+ Add Task</button>
+    </header>
+
+    <!-- Task List Section -->
+    <main>
+      <ul id="task-list" class="task-list">
+        <!-- Tasks will appear here -->
+      </ul>
+      <p id="empty-message" class="empty-message">No tasks yet. Click “Add Task” to get started!</p>
+    </main>
+  </div>
+
+  <!-- Modal Form for Adding/Editing Tasks -->
+  <div id="task-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title">Add New Task</h2>
+      <form id="task-form">
+        <label for="title">Title <span>*</span></label>
+        <input type="text" id="title" placeholder="Enter task title" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Optional details..."></textarea>
+
+        <label for="due-date">Due Date & Time</label>
+        <input type="datetime-local" id="due-date">
+
+        <div class="form-actions">
+          <button type="submit" id="save-task-btn" class="primary-btn">Save Task</button>
+          <button type="button" id="cancel-btn" class="secondary-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Confirm</h3>
+      <p id="confirm-message">Are you sure?</p>
+      <div class="form-actions confirm-actions">
+        <button type="button" id="confirm-no" class="secondary-btn">Cancel</button>
+        <button type="button" id="confirm-yes" class="primary-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Overlay -->
+  <div id="overlay" class="overlay hidden"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
