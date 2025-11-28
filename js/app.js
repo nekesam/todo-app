@@ -1,187 +1,300 @@
-// ELEMENTS
-// ============================
-const addTaskBtn = document.getElementById("add-task-btn");
-const modal = document.getElementById("task-modal");
-const overlay = document.getElementById("overlay");
-const cancelBtn = document.getElementById("cancel-btn");
-const taskForm = document.getElementById("task-form");
-const taskList = document.getElementById("task-list");
-const emptyMessage = document.getElementById("empty-message");
-const saveTaskBtn = document.getElementById("save-task-btn");
-const confirmModal = document.getElementById("confirm-modal");
-const confirmMessageEl = document.getElementById("confirm-message");
-const confirmYesBtn = document.getElementById("confirm-yes");
-const confirmNoBtn = document.getElementById("confirm-no");
 
-let isSubmitting = false;
+//     const taskList = document.getElementById('task-list');
+//     const addTaskBtn = document.getElementById('add-task-btn');
+//     const modal = document.getElementById('task-modal');
+//     const closeModal = document.getElementById('close-modal');
+//     const taskForm = document.getElementById('task-form');
+//     const modalTitle = document.getElementById('modal-title');
+//     const taskIdInput = document.getElementById('task-id');
+//     const taskTitleInput = document.getElementById('task-title');
+//     const taskDescInput = document.getElementById('task-desc');
+//     const taskDueInput = document.getElementById('task-due');
 
-// ============================
-// MODAL OPEN/CLOSE
-// ============================
-addTaskBtn.addEventListener("click", () => {
-  modal.classList.remove("hidden");
-  overlay.classList.remove("hidden");
-});
+//     let tasks = [];
 
-cancelBtn.addEventListener("click", () => {
-  modal.classList.add("hidden");
-  overlay.classList.add("hidden");
-});
+//     // Open modal
+//     addTaskBtn.addEventListener('click', () => {
+//         modal.style.display = 'block';
+//         modalTitle.textContent = 'Add Task';
+//         taskForm.reset();
+//         taskIdInput.value = '';
+//     });
 
-overlay.addEventListener("click", () => {
-  modal.classList.add("hidden");
-  overlay.classList.add("hidden");
-});
+//     // Close modal
+//     closeModal.addEventListener('click', () => {
+//         modal.style.display = 'none';
+//     });
 
-// Helper: show a custom confirm dialog. Returns a Promise<boolean>.
-function showConfirm(message) {
-  return new Promise((resolve) => {
-    confirmMessageEl.textContent = message;
-    confirmModal.classList.remove("hidden");
-    overlay.classList.remove("hidden");
+//     // Click outside modal closes it
+//     window.addEventListener('click', (e) => {
+//         if (e.target === modal) modal.style.display = 'none';
+//     });
 
-    // Handlers
-    const cleanup = (result) => {
-      confirmModal.classList.add("hidden");
-      overlay.classList.add("hidden");
-      confirmYesBtn.removeEventListener("click", onYes);
-      confirmNoBtn.removeEventListener("click", onNo);
-      overlay.removeEventListener("click", onOverlay);
-      resolve(result);
-    };
+//     // Load and render tasks
+//     async function loadTasks() {
+//         tasks = await fetchTasks();
+//         renderTasks();
+//     }
 
-    const onYes = () => cleanup(true);
-    const onNo = () => cleanup(false);
-    const onOverlay = () => cleanup(false);
+//     // Render tasks
+//     function renderTasks() {
+//         taskList.innerHTML = '';
+//         const now = new Date();
 
-    confirmYesBtn.addEventListener("click", onYes);
-    confirmNoBtn.addEventListener("click", onNo);
-    overlay.addEventListener("click", onOverlay);
-  });
-}
+//         tasks.forEach(task => {
+//             const li = document.createElement('li');
 
-// ============================
-// RENDER TASKS
-// ============================
-async function renderTasks() {
-  const tasks = await getTasks(); // fetch from Xano
-  taskList.innerHTML = "";
+//             // Task title
+//             const taskTitle = document.createElement('span');
+//             taskTitle.textContent = task.title;
+//             taskTitle.style.fontWeight = 'bold';
 
-  if (tasks.length === 0) {
-    emptyMessage.style.display = "block";
-    return;
-  } else {
-    emptyMessage.style.display = "none";
-  }
+//             // Task description
+//             const taskDesc = document.createElement('div');
+//             taskDesc.textContent = task.description || '';
+//             taskDesc.style.fontSize = '0.9rem';
+//             taskDesc.style.color = '#555';
 
-  tasks.forEach(task => {
-    const li = document.createElement("li");
-    li.className = "task-item";
+//             // Task due date
+//             const taskDue = document.createElement('div');
+//             const dueDate = new Date(task.due_date);
+//             taskDue.textContent = `Due: ${dueDate.toLocaleString()}`;
+//             taskDue.style.fontSize = '0.8rem';
+//             taskDue.style.color = '#888';
 
-    // Check if task is overdue
-    const now = new Date();
-    const dueDate = task.due_date ? new Date(task.due_date) : null;
-    const isOverdue = dueDate && dueDate < now && !task.completed;
+//             // Actions container
+//             const actions = document.createElement('div');
+//             actions.className = 'actions';
 
-    li.innerHTML = `
-      <input type="checkbox" ${task.completed ? "checked" : ""} class="complete-checkbox" data-id="${task.id}">
-      <div class="task-details ${task.completed ? "completed" : ""} ${isOverdue ? "overdue" : ""}">
-        <h3>${task.title}</h3>
-        ${task.description ? `<p>${task.description}</p>` : ""}
-        ${task.due_date ? `<small>Due: ${new Date(task.due_date).toLocaleString()}</small>` : ""}
-      </div>
-      <button class="delete-btn" data-id="${task.id}">Delete</button>
-    `;
+//             // Complete button
+//             const completeBtn = document.createElement('button');
+//             completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+//             completeBtn.addEventListener('click', async () => {
+//                 await toggleTaskCompletion(task.id, !task.completed);
+//                 loadTasks();
+//             });
 
-    taskList.appendChild(li);
-  });
+//             // Edit button
+//             const editBtn = document.createElement('button');
+//             editBtn.textContent = 'Edit';
+//             editBtn.addEventListener('click', () => {
+//                 modal.style.display = 'block';
+//                 modalTitle.textContent = 'Edit Task';
+//                 taskIdInput.value = task.id;
+//                 taskTitleInput.value = task.title;
+//                 taskDescInput.value = task.description;
+//                 taskDueInput.value = task.due_date.slice(0,16);
+//             });
 
-  // Add event listeners for checkboxes and delete buttons
-  document.querySelectorAll(".complete-checkbox").forEach(checkbox => {
-    checkbox.addEventListener("change", async (e) => {
-      const id = e.target.dataset.id;
-      const completed = e.target.checked;
+//             // Delete button
+//             const deleteBtn = document.createElement('button');
+//             deleteBtn.textContent = 'Delete';
+//             deleteBtn.addEventListener('click', async () => {
+//                 if(confirm('Are you sure you want to delete this task?')) {
+//                     await deleteTaskById(task.id);
+//                     loadTasks();
+//                 }
+//             });
 
-      // Optimistic UI: toggle completed class immediately for instant feedback
-      const li = e.target.closest('.task-item');
-      const details = li ? li.querySelector('.task-details') : null;
-      if (details) details.classList.toggle('completed', completed);
+//             actions.appendChild(completeBtn);
+//             actions.appendChild(editBtn);
+//             actions.appendChild(deleteBtn);
 
-      // Temporarily disable checkbox to avoid rapid toggles
-      e.target.disabled = true;
+//             // Apply completed/overdue classes
+//             if(task.completed) li.classList.add('completed');
+//             else if(dueDate < now) li.classList.add('overdue');
 
-      try {
-        await updateTask(id, { completed });
-      } catch (err) {
-        // Revert UI on error
-        if (details) details.classList.toggle('completed', !completed);
-        e.target.checked = !completed;
-        console.error('Failed to update task:', err);
-        alert('Failed to update task. Please try again.');
-      } finally {
-        e.target.disabled = false;
-      }
+//             // Append elements to li
+//             li.appendChild(taskTitle);
+//             li.appendChild(taskDesc);
+//             li.appendChild(taskDue);
+//             li.appendChild(actions);
+
+//             taskList.appendChild(li);
+//         });
+//     }
+
+//     // Handle form submit
+//     taskForm.addEventListener('submit', async (e) => {
+//         e.preventDefault();
+
+//         const newTask = {
+//             title: taskTitleInput.value,
+//             description: taskDescInput.value,
+//             due_date: taskDueInput.value,
+//             completed: false
+//         };
+
+//         if(taskIdInput.value) {
+//             // Update existing task
+//             await updateTask(taskIdInput.value, newTask);
+//         } else {
+//             // Add new task
+//             await addTask(newTask);
+//         }
+
+//         modal.style.display = 'none';
+//         loadTasks();
+//     });
+
+//     // Initial load
+//     loadTasks();
+// });
+document.addEventListener('DOMContentLoaded', () => {
+    const taskList = document.getElementById('task-list');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const modal = document.getElementById('task-modal');
+    const closeModal = document.getElementById('close-modal');
+    const taskForm = document.getElementById('task-form');
+    const modalTitle = document.getElementById('modal-title');
+    const taskIdInput = document.getElementById('task-id');
+    const taskTitleInput = document.getElementById('task-title');
+    const taskDescInput = document.getElementById('task-desc');
+    const taskDueInput = document.getElementById('task-due');
+
+    let tasks = [];
+
+    // Open modal
+    addTaskBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+        modalTitle.textContent = 'Add Task';
+        taskForm.reset();
+        taskIdInput.value = '';
     });
-  });
 
-  document.querySelectorAll(".delete-btn").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.dataset.id;
-      const confirmed = await showConfirm("Are you sure you want to delete this task?");
-      if (confirmed) {
-        await deleteTask(id);
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Click outside modal closes it
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+    });
+
+    // Load and render tasks
+    async function loadTasks() {
+        tasks = await fetchTasks();
         renderTasks();
-      }
-    });
-  });
-}
-
-// ============================
-// ADD NEW TASK
-// ============================
-taskForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const title = document.getElementById("title").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const dueDate = document.getElementById("due-date").value;
-
-  if (!title) return alert("Please enter a task title!");
-
-  const newTask = {
-    title,
-    description,
-    due_date: dueDate || null,
-    completed: false
-  };
-
-  // Prevent duplicate submissions
-  if (isSubmitting) return;
-  isSubmitting = true;
-  if (saveTaskBtn) {
-    saveTaskBtn.disabled = true;
-    saveTaskBtn.textContent = "Saving...";
-  }
-
-  try {
-    await addTask(newTask);
-    modal.classList.add("hidden");
-    overlay.classList.add("hidden");
-    taskForm.reset();
-    await renderTasks();
-  } catch (err) {
-    console.error("Failed to add task:", err);
-    alert("Failed to add task. Please try again.");
-  } finally {
-    isSubmitting = false;
-    if (saveTaskBtn) {
-      saveTaskBtn.disabled = false;
-      saveTaskBtn.textContent = "Save Task";
+        notifyOverdueTasks(); // Check overdue tasks and alert
     }
-  }
-});
 
-// ============================
-// INITIAL LOAD
-// ============================
-renderTasks();
+    // Render tasks
+    function renderTasks() {
+        taskList.innerHTML = '';
+        const now = new Date();
+
+        tasks.forEach(task => {
+            const li = document.createElement('li');
+
+            // Task title
+            const taskTitle = document.createElement('span');
+            taskTitle.textContent = task.title;
+            taskTitle.style.fontWeight = 'bold';
+
+            // Task description
+            const taskDesc = document.createElement('div');
+            taskDesc.textContent = task.description || '';
+            taskDesc.style.fontSize = '0.9rem';
+            taskDesc.style.color = '#555';
+
+            // Task due date
+            const taskDue = document.createElement('div');
+            const dueDate = new Date(task.due_date);
+            taskDue.textContent = `Due: ${dueDate.toLocaleString()}`;
+            taskDue.style.fontSize = '0.8rem';
+            taskDue.style.color = '#888';
+
+            // Actions container
+            const actions = document.createElement('div');
+            actions.className = 'actions';
+
+            // Complete button
+            const completeBtn = document.createElement('button');
+            completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+            completeBtn.style.backgroundColor = task.completed ? '#6c757d' : '#bfeecaff'; // grey for undo, green for complete
+            completeBtn.addEventListener('click', async () => {
+                await toggleTaskCompletion(task.id, !task.completed);
+                loadTasks();
+            });
+
+            // Edit button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.style.backgroundColor = '#ffd966ff'; // yellow for edit
+            editBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+                modalTitle.textContent = 'Edit Task';
+                taskIdInput.value = task.id;
+                taskTitleInput.value = task.title;
+                taskDescInput.value = task.description;
+                taskDueInput.value = task.due_date.slice(0,16);
+            });
+
+            // Delete button remains the same
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.style.backgroundColor = '#ff6b6bff'; // red for delete
+            deleteBtn.addEventListener('click', async () => {
+                if(confirm('Are you sure you want to delete this task?')) {
+                    await deleteTaskById(task.id);
+                    loadTasks();
+                }
+            });
+
+            actions.appendChild(completeBtn);
+            actions.appendChild(editBtn);
+            actions.appendChild(deleteBtn);
+
+            // Apply completed/overdue classes
+            if(task.completed) li.classList.add('completed');
+            else if(dueDate < now) li.classList.add('overdue');
+
+            // Append elements to li
+            li.appendChild(taskTitle);
+            li.appendChild(taskDesc);
+            li.appendChild(taskDue);
+            li.appendChild(actions);
+
+            taskList.appendChild(li);
+        });
+    }
+
+    // Handle form submit
+    taskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const newTask = {
+            title: taskTitleInput.value,
+            description: taskDescInput.value,
+            due_date: taskDueInput.value,
+            completed: false
+        };
+
+        if(taskIdInput.value) {
+            await updateTask(taskIdInput.value, newTask);
+        } else {
+            await addTask(newTask);
+        }
+
+        modal.style.display = 'none';
+        loadTasks();
+    });
+
+    // Notify about overdue tasks
+    function notifyOverdueTasks() {
+        const now = new Date();
+        const overdueTasks = tasks.filter(task => {
+            const dueDate = new Date(task.due_date);
+            return !task.completed && dueDate < now;
+        });
+
+        if(overdueTasks.length > 0) {
+            const titles = overdueTasks.map(t => t.title).join(', ');
+            alert(`⚠️ You have overdue tasks: ${titles}`);
+        }
+    }
+
+    // Initial load
+    loadTasks();
+});

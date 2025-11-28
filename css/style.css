@@ -1,228 +1,209 @@
-/* ========== Global Styles ========== */
-:root {
-  --primary: #4a90e2;
-  --secondary: #f5f7fa;
-  --success: #27ae60;
-  --danger: #e74c3c;
-  --dark: #333;
-  --gray: #888;
-  --light: #f9f9f9;
-}
-
-/* ========== Base Styles ========== */
+/* ===== Base Styles ===== */
 body {
-  font-family: 'Inter', Arial, sans-serif;
-  background-color: var(--secondary);
-  color: var(--dark);
-  margin: 0;
-  padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
 }
 
-/* ========== Layout ========== */
 .container {
-  max-width: 700px;
-  margin: 40px auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 20px 30px;
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-/* ========== Header ========== */
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-.app-header h1 {
-  font-size: 28px;
-  font-weight: 600;
+/* ===== Buttons ===== */
+button {
+    padding: 8px 14px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s, transform 0.2s;
 }
 
-.primary-btn {
-  background-color: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease;
+button:hover {
+    transform: scale(1.05);
 }
 
-.primary-btn:hover {
-  background-color: #357acb;
+button.add-btn {
+    background-color: #007bff;
+    color: #fff;
 }
 
-.secondary-btn {
-  background-color: var(--light);
-  color: var(--dark);
-  border: 1px solid var(--gray);
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+
+/* ===== Task List ===== */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.secondary-btn:hover {
-  background-color: #eaeaea;
+li {
+    background: #f9f9f9;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 8px;
+    /* display: flex; */
+    /* justify-content: space-between; */
+    /* align-items: flex-start; */
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* ========== Task List ========== */
-.task-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+li.overdue {
+   background-color: rgb(250, 224, 229);
 }
 
-.task-item {
-  background-color: var(--light);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 14px 18px;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.2s ease;
+li.completed span {
+    text-decoration: line-through;
+    color: grey;
 }
 
-.task-item:hover {
-  background-color: #f0f4ff;
+li div.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
 }
 
-.task-details {
-  flex: 1;
+/* Task content */
+li span {
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 5px;
 }
 
-.task-title {
-  font-weight: 500;
-  margin: 0;
+li div {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    color: #555;
 }
 
-.task-details p {
-  margin: 4px 0 0 0;
-}
-
-.task-details small {
-  font-size: 13px;
-  color: var(--gray);
-}
-
-/* Completed tasks */
-.completed .task-title {
-  text-decoration: line-through;
-  color: var(--gray);
-}
-
-/* Immediate visual state when checkbox toggled */
-.task-details.completed h3,
-.task-details.completed p,
-.task-details.completed small {
-  text-decoration: line-through;
-  color: #9aa3ad;
-}
-
-/* Overdue tasks */
-.overdue {
-  border-color: var(--danger);
-  background-color: #fdecea;
-}
-
-/* Checkbox and Delete Button */
-.complete-checkbox {
-  margin-right: 12px;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background: var(--danger);
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.delete-btn:hover {
-  background: #c0392b;
-}
-
-/* ========== Modal ========== */
+/* ===== Modal ===== */
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 400px;
-  z-index: 1001;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.hidden {
-  display: none;
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-.modal-content label {
-  display: block;
-  margin-top: 10px;
-  font-weight: 500;
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.modal-content input,
-.modal-content textarea {
-  width: 100%;
-  margin-top: 6px;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-family: inherit;
+/* ===== Form ===== */
+form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border 0.2s;
 }
 
-/* Overlay */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  transition: opacity 0.2s ease;
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
-/* Empty state message */
-.empty-message {
-  text-align: center;
-  color: var(--gray);
-  margin-top: 30px;
-  font-size: 15px;
+textarea {
+    resize: vertical;
+    min-height: 60px;
 }
 
-/* Confirm modal tweaks */
-.confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+/* Form submit button */
+form button {
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
 }
 
-#confirm-message {
-  margin-top: 8px;
-  color: var(--dark);
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    li div.actions {
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    li div.actions {
+        flex-direction: column;
+        width: 100%;
+    }
 }
